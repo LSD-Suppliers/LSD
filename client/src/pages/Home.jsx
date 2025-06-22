@@ -32,13 +32,13 @@ const Home = () => {
         {/* Info Box */}
         <div className="bg-blue-200/10 backdrop-blur-md border border-blue-300 rounded-3xl px-14 py-12 shadow-2xl mb-20 text-lg leading-relaxed text-blue-100 w-full max-w-6xl">
           <p>
-            LinkedIn Scam Detector empowers users to assess the authenticity of LinkedIn profiles, messages, and URLs with ease.
+            Linkedin Scam Detonator is a verification tool designed to analyze the trustworthiness of Linkedin accounts
           </p>
           <p className="mt-6">
-            Our AI-backed system uncovers red flags, patterns of manipulation, and hidden scam tactics — all in one place.
+            Receive a data driven report of red flags in an account's behaviour or messaging pattern
           </p>
           <p className="mt-6">
-            Protect your network, verify content, and outsmart scammers before they strike.
+            Evaluate whether shared links are safe or malicious and report confirmed scammers
           </p>
         </div>
 

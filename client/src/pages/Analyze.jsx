@@ -61,7 +61,7 @@ const Analyze = () => {
             </h1>
             <p className="text-2xl text-blue-300 max-w-4xl">
               Paste any LinkedIn profile URL and our system will assess the likelihood of the profile being
-              fake, suspicious, or genuine.
+              scam, suspicious, or genuine.
             </p>
             <input
               type="text"
@@ -125,7 +125,7 @@ const Analyze = () => {
             {/* Disclaimer */}
             <div className="bg-yellow-100/10 border-l-8 border-yellow-400 text-yellow-200 backdrop-blur-md p-10 rounded-2xl shadow-md">
               <p className="text-2xl">
-                <strong>Disclaimer:</strong> This prediction is generated using internal heuristics. For deeper verification, you can analyze received messages from the same user.
+                <strong>Disclaimer:</strong> This result is generated on the basis of the parameters mentioned above, If you still have doubts, For deeper verification, you can analyze received messages from the same user.
               </p>
               <button
                 onClick={() => navigate('/analyze-text')}
