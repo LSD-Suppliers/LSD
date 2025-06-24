@@ -27,6 +27,6 @@ async def try_all_cookies(profile_url):
     return {"status": "error", "message": "All cookie sessions failed. Try again later."}
 
 if __name__ == "__main__":
-    test_url = "https://www.linkedin.com/in/hyplona/"
+    test_url = "https://www.linkedin.com/in/sidhant-kumar-giri-26432b34b/"
     result = asyncio.run(try_all_cookies(test_url))
     print(result)

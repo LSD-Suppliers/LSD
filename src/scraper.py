@@ -26,10 +26,10 @@ async def scrape_profile(profile_url, cookies):
         # Dump the HTML for debugging
         '''
         html = await page.content()
-        with open("hyplona.html", "w", encoding="utf-8") as f:
+        with open("randomdude.html", "w", encoding="utf-8") as f:
             f.write(html)
             return {"name" : "whayo"}
-        '''     
+        '''  
 
         # Extract the name
         try:
@@ -57,21 +57,47 @@ async def scrape_profile(profile_url, cookies):
         except:
             verified = False
 
-        # Extract about me
-        '''
+        # Check for company page link
         try:
-            about_raw = await page.locator("section.pv-about-section span[aria-hidden='true']").first.text_content()
-            if not about_raw or about_raw.strip() == "":
-                # Fallback: grab any span with aria-hidden inside a div with line clamp (common LinkedIn pattern)
-                about_raw = await page.locator("div[style*='-webkit-line-clamp'] span[aria-hidden='true']").first.text_content()
-                
+            has_company_link = await page.locator("a[data-field='experience_company_logo'][href*='linkedin.com/company/']").count() > 0
+        except:
+            has_company_link = False
+
+        # Check for profile completeness - education and skills sections
+        try:
+            await page.mouse.wheel(0, 3000)
+            await page.wait_for_timeout(1000)
+            has_education = await page.locator("li:has(span.t-bold):has-text('University')").count() > 0
+            if not has_education:
+                has_education = await page.locator("section:has(h2:has-text('Education')) li").count() > 0
+        except:
+            has_education = False
+
+        try:
+            await page.mouse.wheel(0, 3000)
+            await page.wait_for_timeout(1000)
+            has_skills = await page.locator("section:has(h2:has-text('Skills')) li").count() > 0
+        except:
+            has_skills = False
+
+
+        # Extract about me
+        try:
+            await page.mouse.wheel(0, 3000)
+            await page.wait_for_timeout(1000)
+
+            about_raw = await page.locator("div[style*='-webkit-line-clamp'] span[aria-hidden='true']").first.text_content()
             about = about_raw.strip() if about_raw else ""
         except:
             about = ""
-        '''
 
+        # Return the scraped data
         return {"name" : name, 
                 "connections": connections, 
-                "verified": verified, 
+                "verified": verified,
+                "has_company_link": has_company_link, 
+                "has_education": has_education,
+                "has_skills": has_skills,
+                "about": about,
                 "url": profile_url}
         
