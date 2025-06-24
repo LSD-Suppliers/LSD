@@ -16,6 +16,20 @@ async def scrape_profile(profile_url, cookies):
          # Check if we're logged out or hit a captcha
         if "login" in page.url.lower() or "checkpoint" in page.url.lower():
             raise Exception("Cookie expired or blocked.")
+        
+        # Scroll slowly in steps to trigger all lazy loads
+        for _ in range(5):
+            await page.mouse.wheel(0, 1000)
+            await page.wait_for_timeout(500)  # wait between scrolls
+        await page.wait_for_timeout(1000)
+
+        # Dump the HTML for debugging
+        '''
+        html = await page.content()
+        with open("hyplona.html", "w", encoding="utf-8") as f:
+            f.write(html)
+            return {"name" : "whayo"}
+        '''     
 
         # Extract the name
         try:
@@ -38,22 +52,26 @@ async def scrape_profile(profile_url, cookies):
 
         # Check for verified profile
         try:
-            badge = await page.locator('[aria-label*="Verified"]').first.get_attribute("aria-label")
-            verified = "verified" in badge.lower()
+            tooltip_text = await page.locator("div.artdeco-hoverable-content__content").first.text_content()
+            verified = "verification" in tooltip_text.lower()
         except:
             verified = False
 
         # Extract about me
+        '''
         try:
-            about = await page.locator("section.pv-about-section span").first.text_content()
-            about = about.strip() if about else ""
+            about_raw = await page.locator("section.pv-about-section span[aria-hidden='true']").first.text_content()
+            if not about_raw or about_raw.strip() == "":
+                # Fallback: grab any span with aria-hidden inside a div with line clamp (common LinkedIn pattern)
+                about_raw = await page.locator("div[style*='-webkit-line-clamp'] span[aria-hidden='true']").first.text_content()
+                
+            about = about_raw.strip() if about_raw else ""
         except:
             about = ""
-        
+        '''
 
         return {"name" : name, 
                 "connections": connections, 
                 "verified": verified, 
-                "about": about, 
                 "url": profile_url}
         
