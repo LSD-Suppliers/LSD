@@ -4,7 +4,7 @@ from model_proc import run_model_pipeline
 
 async def test_cookie():
     profile_url = input("Enter LinkedIn profile URL: ")
-    cookie_file = "cookies/cookie_snh.json"
+    cookie_file = "cookies/cookie_b2.json"
 
     import json
     with open(cookie_file, 'r') as f:
