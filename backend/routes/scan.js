@@ -4,7 +4,7 @@ const axios = require("axios");
 const router = express.Router();
 
 const apiKey = process.env.VIRUSTOTAL_API_KEY;
-console.log("VirusTotal API Key (should not be undefined):", apiKey);
+// console.log("VirusTotal API Key (should not be undefined):", apiKey);
 
 router.post("/check-url", async (req, res) => {
   const { url } = req.body;

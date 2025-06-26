@@ -1,4 +1,3 @@
-// src/pages/AnalyzeText.jsx
 import React, { useState } from "react";
 import {
   PieChart,
@@ -18,48 +17,30 @@ const AnalyzeText = () => {
   const [inputText, setInputText] = useState("");
   const [resultData, setResultData] = useState(null);
 
-  const getRandomScore = () => Math.floor(Math.random() * 101);
+  const analyzeText = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/analyze-text", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ text: inputText }),
+      });
 
-  const analyzeText = () => {
-    const scamLikelihood = getRandomScore();
+      const data = await res.json();
 
-    const analysisSummary = [
-      {
-        pattern: "Lack of clarity",
-        description:
-          "Message is vague and avoids giving specific information about the offer or role.",
-      },
-      {
-        pattern: "Platform Switching",
-        description:
-          "User requests switching to WhatsApp or Telegram, often used to avoid detection.",
-      },
-      {
-        pattern: "Unprofessional tone",
-        description:
-          "Doesn't reflect a formal recruitment tone, using informal or awkward language.",
-      },
-      {
-        pattern: "No official contact",
-        description:
-          "No company domain emails or LinkedIn pages shared, only generic links.",
-      },
-      {
-        pattern: "Link embedded",
-        description:
-          "Contains suspicious links that are not tied to known job portals or verified domains.",
-      },
-    ];
+      let logo = genuineImg;
+      if (data.scam_score > 65) logo = scamImg;
+      else if (data.scam_score > 40) logo = susImg;
 
-    let logo = genuineImg;
-    if (scamLikelihood > 65) logo = scamImg;
-    else if (scamLikelihood > 40) logo = susImg;
-
-    setResultData({
-      scamLikelihood,
-      analysisSummary,
-      logo,
-    });
+      setResultData({
+        scamLikelihood: data.scam_score,
+        analysisSummary: data.analysis_summary,
+        logo,
+      });
+    } catch (error) {
+      console.error("Error analyzing text:", error);
+    }
   };
 
   const renderInsightBox = () => {
@@ -110,10 +91,7 @@ const AnalyzeText = () => {
 
   return (
     <div className="relative min-h-screen w-full font-['Inter'] text-white">
-      {/* Solid Black Background */}
       <div className="absolute inset-0 bg-black z-0" />
-
-      {/* Main Container */}
       <div className="relative z-10 px-6 py-16 max-w-6xl mx-auto">
         <div className="bg-blue-900/30 backdrop-blur-lg border border-blue-700 rounded-3xl p-10 shadow-xl space-y-10">
           <h2 className="text-4xl font-bold text-center text-white">
@@ -138,10 +116,8 @@ const AnalyzeText = () => {
           </div>
         </div>
 
-        {/* Result Section */}
         {resultData && (
           <div className="mt-16 space-y-12">
-            {/* Result Card */}
             <div className="bg-blue-900/30 backdrop-blur-lg border border-blue-700 rounded-3xl p-10 text-center shadow-xl space-y-6">
               <img
                 src={resultData.logo}
@@ -153,7 +129,6 @@ const AnalyzeText = () => {
               </div>
             </div>
 
-            {/* Pie Chart and Info Block */}
             <div className="bg-blue-900/30 backdrop-blur-md border border-blue-700 rounded-3xl p-10 shadow-xl flex flex-col md:flex-row items-center md:items-start md:justify-between space-y-8 md:space-y-0">
               <div className="w-full md:w-1/2 h-72">
                 <ResponsiveContainer width="100%" height="100%">
@@ -191,17 +166,28 @@ const AnalyzeText = () => {
 
               <div className="w-full md:w-1/2 text-left space-y-4">
                 <h4 className="text-xl font-semibold text-white">
-                  Message Analysis Insights
+                  Message Analysis Criteria
                 </h4>
                 <ul className="list-disc list-inside text-lg space-y-2">
                   <li>Evaluation includes tone, language, and platform behavior.</li>
                   <li>Dynamic model estimates risk using learned scam patterns.</li>
                   <li>Visual breakdown helps in identifying risk distribution.</li>
                 </ul>
+
+                {/* ✅ Display review bullets here */}
+                <div className="mt-6">
+                  <h4 className="text-lg font-semibold text-white mb-2">Review Summary:</h4>
+                  <ul className="list-disc list-inside space-y-1 text-blue-200 text-base">
+                    {resultData.analysisSummary.map((item, idx) => (
+                      <li key={idx}>
+                        <strong>{item.pattern}:</strong> {item.description}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               </div>
             </div>
 
-            {/* Conditional Suspicion Reason Box */}
             {renderInsightBox()}
           </div>
         )}
