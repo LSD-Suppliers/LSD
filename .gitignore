@@ -4,3 +4,5 @@
 /src/*.html
 __pycache__/
 mytrash/
+node_modules
+.env

@@ -1,12 +1,17 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+const dotenv = require("dotenv");
 const { chromium } = require("playwright");
 const { spawn } = require("child_process");
 const path = require("path");
+const scanRoutes = require("./routes/scan");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+app.use("/api", scanRoutes);
 
 app.post("/analyze-url", async (req, res) => {
   const { url } = req.body;
@@ -54,4 +59,5 @@ app.post("/analyze-url", async (req, res) => {
   }
 });
 
-app.listen(3000, () => console.log("✅ Express backend running at http://localhost:3000"));
+const PORT = process.env.PORT || 3000;
+app.listen(3000, () => console.log(`Server running on http://localhost:${PORT}`));

@@ -39,9 +39,15 @@ const Analyze = () => {
     return GenuineLogo;
   };
 
-  const getUsernameFromURL = (url) => {
-    const match = url.match(/linkedin\.com\/in\/([\w-]+)/);
-    return match ? match[1] : 'N/A';
+  const renderYesNo = (value) => (
+    <span className={`px-4 py-2 rounded-full text-white font-semibold text-lg ${value ? 'bg-green-600' : 'bg-red-600'}`}>
+      {value ? 'Yes' : 'No'}
+    </span>
+  );
+
+  const formatConnections = (value) => {
+    if (!value || typeof value !== 'number') return 'N/A';
+    return value >= 500 ? '500+' : value;
   };
 
   return (
@@ -72,73 +78,91 @@ const Analyze = () => {
             </button>
           </div>
         ) : (
-          <div className="space-y-16 text-[22px]">
-            {/* Scam Likelihood Box */}
-            <div className="bg-blue-900/30 border border-blue-700 backdrop-blur-lg p-10 rounded-3xl shadow-lg flex flex-col items-center gap-6 text-center">
-              <img src={getStatusLogo()} alt="Status" className="w-40 drop-shadow-lg" />
-              <h3 className="text-5xl font-bold text-blue-300">Scam Likelihood: {scamScore}%</h3>
-            </div>
-
-            {/* Profile Details Box */}
-            <div className="bg-blue-900/30 border border-blue-700 backdrop-blur-md p-10 rounded-3xl text-blue-300">
-              <h4 className="text-3xl font-bold text-white mb-4">Profile Details</h4>
-              <p className="mb-3"><strong className="text-white">Profile URL:</strong> {usernameURL}</p>
-              <p><strong className="text-white">User Name:</strong> {getUsernameFromURL(usernameURL)}</p>
-            </div>
-
-            {/* Stats Box with Real Data */}
-            <div className="bg-blue-900/30 border border-blue-700 backdrop-blur-md p-10 rounded-3xl text-white grid grid-cols-1 md:grid-cols-2 gap-10">
-              <div className="text-lg">
-                <span className="text-blue-300 font-semibold">Verification Status:</span>{' '}
-                {inputData.verification_status ? 'Yes' : 'No'}
-              </div>
-              <div className="text-lg">
-                <span className="text-blue-300 font-semibold">Company URL Present:</span>{' '}
-                {inputData.company_url_present ? 'Yes' : 'No'}
+          inputData && (
+            <div className="space-y-16 text-[22px]">
+              {/* Scam Likelihood Box */}
+              <div className="bg-blue-900/30 border border-blue-700 backdrop-blur-lg p-10 rounded-3xl shadow-lg flex flex-col items-center gap-6 text-center">
+                <img src={getStatusLogo()} alt="Status" className="w-40 drop-shadow-lg" />
+                <h3 className="text-5xl font-bold text-blue-300">
+                  Scam Likelihood: {scamScore}%
+                </h3>
+                <p className="text-xl text-white font-medium">
+                  Verdict: <span className="text-blue-400">{inputData.verdict}</span>
+                </p>
               </div>
 
-              {[
-                { label: 'Connection Score', value: inputData.connection_score },
-                { label: 'Profile Completeness', value: inputData.profile_completeness },
-                { label: 'AI Text Score', value: inputData.ai_text_score },
-              ].map((stat, idx) => (
-                <div key={idx} className="flex flex-col gap-2">
-                  <span className="text-xl font-semibold text-blue-300">
-                    {stat.label}: {(stat.value * 100).toFixed(0)}%
-                  </span>
-                  <meter
-                    min="0"
-                    max="100"
-                    value={(stat.value * 100).toFixed(0)}
-                    className="w-full h-5"
-                  />
+              {/* Profile Link & Name */}
+              <div className="bg-blue-900/30 border border-blue-700 backdrop-blur-md p-8 rounded-3xl text-blue-300 space-y-4">
+                <h4 className="text-3xl font-bold text-white mb-2">Profile Information</h4>
+                <p><strong className="text-white">Name:</strong> {inputData.name}</p>
+                <p><strong className="text-white">Profile URL:</strong>{' '}
+                  <a href={inputData.url} target="_blank" rel="noreferrer" className="underline text-blue-400">
+                    {inputData.url}
+                  </a>
+                </p>
+              </div>
+
+              {/* Profile Feature Stats */}
+              <div className="bg-blue-900/30 border border-blue-700 backdrop-blur-md p-10 rounded-3xl text-white">
+                <h4 className="text-3xl font-bold text-white mb-6">Profile Attributes</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div className="flex flex-col gap-2">
+                    <span className="text-blue-300 font-semibold">Verified Badge</span>
+                    {renderYesNo(inputData.verified)}
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <span className="text-blue-300 font-semibold">About Section</span>
+                    {renderYesNo(inputData.has_about)}
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <span className="text-blue-300 font-semibold">Education Info</span>
+                    {renderYesNo(inputData.has_education)}
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <span className="text-blue-300 font-semibold">Skills Listed</span>
+                    {renderYesNo(inputData.has_skills)}
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <span className="text-blue-300 font-semibold">Company Link</span>
+                    {renderYesNo(inputData.has_company_link)}
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <span className="text-blue-300 font-semibold">Connections</span>
+                    <span className="text-3xl font-bold text-white">
+                      {formatConnections(inputData.connections)}
+                    </span>
+                  </div>
                 </div>
-              ))}
-            </div>
+              </div>
 
-            {/* Evaluation Summary */}
-            <div className="bg-blue-900/30 border border-blue-700 backdrop-blur-md p-10 rounded-3xl text-blue-300 leading-relaxed">
-              <h4 className="text-4xl font-bold mb-4 text-white">Profile Evaluation Summary</h4>
-              <p>
-                Our system evaluates LinkedIn profiles by examining red flags such as inconsistencies,
-                connection counts, profile setup, and history of reports. Using an internal scoring algorithm,
-                it provides a scam-likelihood rating to help you decide whether the profile can be trusted.
-              </p>
-            </div>
+              {/* About Section */}
+              {inputData.about && (
+                <div className="bg-blue-900/30 border border-blue-700 backdrop-blur-md p-10 rounded-3xl text-blue-300 leading-relaxed">
+                  <h4 className="text-3xl font-bold mb-4 text-white">About</h4>
+                  <p>{inputData.about}</p>
+                </div>
+              )}
 
-            {/* Disclaimer */}
-            <div className="bg-yellow-100/10 border-l-8 border-yellow-400 text-yellow-200 backdrop-blur-md p-10 rounded-2xl shadow-md">
-              <p className="text-2xl">
-                <strong>Disclaimer:</strong> This result is generated on the basis of the parameters mentioned above. If you still have doubts, for deeper verification, you can analyze received messages from the same user.
-              </p>
-              <button
-                onClick={() => navigate('/analyze-text')}
-                className="mt-6 px-8 py-4 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition"
-              >
-                Analyze Text from This User
-              </button>
+              {/* Evaluation Summary */}
+              <div className="bg-blue-900/30 border border-blue-700 backdrop-blur-md p-10 rounded-3xl text-blue-300 leading-relaxed">
+                <h4 className="text-4xl font-bold mb-4 text-white">Profile Evaluation Summary</h4>
+                <p>{inputData.summary}</p>
+              </div>
+
+              {/* Disclaimer */}
+              <div className="bg-yellow-100/10 border-l-8 border-yellow-400 text-yellow-200 backdrop-blur-md p-10 rounded-2xl shadow-md">
+                <p className="text-2xl">
+                  <strong>Disclaimer:</strong> This result is generated on the basis of the parameters mentioned above. If you still have doubts, for deeper verification, you can analyze received messages from the same user.
+                </p>
+                <button
+                  onClick={() => navigate('/analyze-text')}
+                  className="mt-6 px-8 py-4 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition"
+                >
+                  Analyze Text from This User
+                </button>
+              </div>
             </div>
-          </div>
+          )
         )}
       </div>
     </div>
