@@ -3,6 +3,9 @@ import os
 from playwright.async_api import async_playwright
 import json
 import random
+from pathlib import Path
+
+
 
 async def scrape_profile(profile_url, cookies):
     async with async_playwright() as p:
@@ -103,17 +106,17 @@ async def scrape_profile(profile_url, cookies):
                 "about": about,
                 "url": profile_url}
         
-
+'''
 async def try_all_cookies(profile_url):
-    cookie_dir = "cookies"
-    cookie_files = sorted(f for f in os.listdir(cookie_dir) if f.endswith(".json"))
+    cookies_dir = Path(__file__).resolve().parent.parent / "cookies"
+    cookie_files = sorted(cookies_dir.glob("*.json"))
 
-    for cookie_file in cookie_files:
-        with open(os.path.join(cookie_dir, cookie_file), "r") as f:
+    for cookie_path in cookie_files:
+        with open(cookie_path, "r") as f:
             cookies = json.load(f)
 
         try:
-            print(f"Trying with {cookie_file}...")
+            print(f"Trying with {cookie_path}...")
             # type : ignore
             profile_data = await scrape_profile(profile_url, cookies)
             
@@ -122,8 +125,10 @@ async def try_all_cookies(profile_url):
                 return {"status": "success", "data": profile_data}
 
         except Exception as e:
-            print(f"{cookie_file} failed:", str(e))
+            print(f"{cookie_path} failed:", str(e))
             continue
+
 
     return {"status": "error", "message": "All cookie sessions failed. Try again later."}
 
+'''

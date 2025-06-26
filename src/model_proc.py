@@ -2,7 +2,8 @@ import asyncio
 import joblib
 import pandas as pd
 import numpy as np
-from scraper import try_all_cookies
+from scraper import scrape_profile
+import json
 
 # Loading trained model
 model = joblib.load("model.joblib")
@@ -31,12 +32,18 @@ def process_profile(data: dict) -> list[float]:
 
 # Main function
 async def run_model_pipeline(profile_url: str) -> dict:
-    response = await try_all_cookies(profile_url)
+    cookie_file = "cookies/cookie_snh.json"  # adjust path if needed
+    with open(cookie_file, 'r') as f:
+        cookies = json.load(f)
 
-    if response.get("status") != "success":
-        return {"status": "fail", "reason": "Scraping failed"}
+    try:
+        profile_data = await scrape_profile(profile_url, cookies)
+        if not profile_data.get("name"):
+            return {"status": "fail", "reason": "Scraping failed"}
+    except Exception as e:
+        return {"status": "fail", "reason": str(e)}
 
-    raw_data = response["data"]
+    raw_data = profile_data
     features = process_profile(raw_data)
     features_df = pd.DataFrame([features], columns=["verification_status","company_url_present","connection_score","profile_completeness"])
     score = float(model.predict(features_df)[0])
@@ -83,3 +90,4 @@ async def run_model_pipeline(profile_url: str) -> dict:
     }
 
     return result
+
