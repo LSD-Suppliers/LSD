@@ -13,27 +13,25 @@ const Analyze = () => {
   const [analyzed, setAnalyzed] = useState(false);
   const navigate = useNavigate();
 
-const handleAnalyze = async () => {
-  // const validPattern = /^https://www.linkedin.com/in/[\w-]+$/;
-  // if (!validPattern.test(usernameURL.trim())) {
-  //   alert("Please enter a valid LinkedIn URL in the format: https://www.linkedin.com/in/username");
-  //   return;
-  // }
+  const handleAnalyze = async () => {
+    try {
+      const res = await axios.post('http://localhost:3000/analyze-url', {
+        url: usernameURL,
+      });
 
-  try {
-    const res = await axios.post('http://127.0.0.1:8000/analyze-url', {
-      url: usernameURL
-    });
-
-    setScamScore(res.data.scam_score.toFixed(2));
-    setInputData(res.data.input_data);
-    setAnalyzed(true);
-  } catch (err) {
-    console.error("Error:", err);
-    alert("Analysis failed. Check backend logs.");
-  }
-};
-
+      if (res.data && res.data.scam_score !== undefined) {
+        setScamScore(res.data.scam_score.toFixed(2));
+        setInputData(res.data);
+        setAnalyzed(true);
+      } else {
+        console.error("Invalid response from backend:", res.data);
+        alert("Analysis failed. No scam_score received from backend.");
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      alert("Analysis failed. Check backend logs.");
+    }
+  };
 
   const getStatusLogo = () => {
     if (scamScore > 65) return ScamLogo;

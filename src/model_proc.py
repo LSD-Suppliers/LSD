@@ -6,7 +6,10 @@ from scraper import scrape_profile
 import json
 
 # Loading trained model
-model = joblib.load("model.joblib")
+import os
+model_path = os.path.join(os.path.dirname(__file__), "model.joblib")
+model = joblib.load(model_path)
+
 
 # Function to process profile data for model input
 def process_profile(data: dict) -> list[float]:
