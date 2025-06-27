@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "LinkedIn Scam Detector",
+  "version": "1.0",
+  "description": "Analyze LinkedIn profiles for scam likelihood.",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icons/icon128.png"
+  },
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "http://localhost:3000/*"
+  ]
+}
