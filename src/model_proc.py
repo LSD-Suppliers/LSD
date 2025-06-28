@@ -35,7 +35,7 @@ def process_profile(data: dict) -> list[float]:
 
 # Main function
 async def run_model_pipeline(profile_url: str) -> dict:
-    cookie_file = "cookies/cookie_b2.json"  # adjust path if needed
+    cookie_file = "cookies/cookie_b4.json"  # adjust path if needed
     with open(cookie_file, 'r') as f:
         cookies = json.load(f)
 
