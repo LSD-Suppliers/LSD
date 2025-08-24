@@ -1,86 +1,43 @@
-LinkedIn Scam Detonator
+# LinkedIn Scam Detector (LSD)
 
-LinkedIn Scam Detonator is a proactive security tool designed to identify and flag potentially scam or suspicious activities on LinkedIn. With the rise in impersonation and scam attempts targeting job seekers and professionals, this platform helps verify account authenticity, assess shared links, evaluate message intent and allows users to report scammed accounts, offering users an added layer of trust and safety.
+LSD (LinkedIn Scam Detector) is a project that detects the likelihood of scams or fraudulent behavior on LinkedIn profiles.  
+It integrates **machine learning**, **web scraping**, and **session management** into a backend-compatible engine.
 
-Problem Statement: 
+---
 
-LinkedIn, while being the leading professional networking platform, is increasingly being exploited by scammers and impersonators. Young professionals and job seekers are often approached by fake recruiters or malicious actors, with no concrete way to verify:
-If a LinkedIn account is legitimate
-If a shared URL is safe
-If a received message carries malicious intent
+## Features
+- **Machine Learning Engine**: Trained using scikit-learn (Random Forest classifier) to classify LinkedIn profiles as scam or genuine.  
+- **Data Preprocessing**: Cleans and structures scraped LinkedIn data for ML model input.  
+- **Automated Scraping**: Uses Playwright to fetch structured profile information while handling LinkedIn’s dynamic content.  
+- **Cookie/Session Management**: Generates and manages authenticated cookies for scraping.  
+- **Model Persistence & Evaluation**: Models are saved with `joblib` and evaluated with metrics like `r2_score`.  
+- **Backend Integration**: Outputs predictions in JSON format, consumed by a Node.js backend via `child_process.spawn`.  
 
-Solution: 
-LinkedIn Scam Detonator
-This tool offers an end-to-end system for identifying and reporting suspicious LinkedIn activity by combining data scraping, machine learning, and trusted external APIs.
+---
 
-Key Features
+## Tech Stack
+- **Python**: Core logic, ML pipeline, and scraping automation.  
+- **scikit-learn**: Random Forest for prediction and model evaluation.  
+- **pandas**: Data preprocessing and analysis.  
+- **joblib**: Model persistence.  
+- **Playwright (Python)**: LinkedIn scraping.  
+- **Node.js**: Backend service communicating with the Python engine.  
+- **JavaScript (Frontend)**: For the website interface (built by collaborators).  
 
-(1) Account Verification
-Input a LinkedIn account profile URL
-The system analyzes the profile's publicly available data and determines the scam likelihood using a supervised machine learning model
+---
 
-(2) Text Message Analysis
-Analyze unsolicited messages to detect suspicious or scam-related intent
-Uses the ChatGPT API for sentiment and intent classification based on text patterns
+---
 
-(3) Link Safety Check
-Evaluate whether a shared link is safe or potentially harmful
-Integration with the VirusTotal API for real-time URL scanning and threat reports
+## Usage
+1. Generate cookies for LinkedIn login and place them in `cookies/`.  
+2. Run the scraper to fetch data from a target profile.  
+3. Preprocess and feed the data into the ML engine.  
+4. Backend consumes the JSON output for integration with the frontend.  
 
-(4) Scammer Reporting System
-Users can report known scammers by submitting profile links and evidence
-Reports are reviewed and moderated to prevent misuse
+---
 
-Tech Stack
+## Authors
+- **ML and Scraping**: Snow Sadh 
+- **Website and Extension Development**: Sneha Jha 
 
-Frontend : React.js, Tailwind CSS, JavaScript
-
-Backend : Node.js, Express.js
-
-Machine Learning : Python, CatBoost, XGBoost
-
-Web Scraping : Selenium, BeautifulSoup
-
-URL Analysis : VirusTotal API
-
-Text Analysis : ChatGPT API
-
-Version Control : Git & GitHub
-
-
-How It Works (Workflow)
-
-User Input: Account URL / Link / Message
-
-Scraping Module: Collects profile data via automated scraping (Selenium + BS4)
-
-ML Engine: Classifies trust score using trained XGBoost and CatBoost models
-
-URL Check: Queries VirusTotal API for domain safety
-
-Message Intent: ChatGPT API analyzes the tone and flags scam-like behavior
-
-Report Submission: Optional step to submit a scam report for manual review
-
-
-Future Enhancements
-
-Browser extension for real-time LinkedIn browsing protection
-
-Community moderation dashboard
-
-Scammer database API for public consumption
-
-Spam text summarizer for faster message reviews
-
-
-Use Cases
-
-Job seekers verifying recruiter authenticity
-
-Users checking links shared via unsolicited DMs
-
-Security teams running background checks before outreach
-
-Reporting impersonators to warn others
-
+---
